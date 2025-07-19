@@ -1,0 +1,39 @@
+services:
+  connect:
+    image: quay.io/debezium/connect:latest
+    container_name: debezium-connect
+    ports:
+      - "8083:8083"
+    env_file:
+      - .env
+    environment:
+      BOOTSTRAP_SERVERS: ${BOOTSTRAP_SERVERS}
+      GROUP_ID: debezium-connect-cloud
+      CONFIG_STORAGE_TOPIC: debezium-connect-configs
+      OFFSET_STORAGE_TOPIC: debezium-connect-offsets
+      STATUS_STORAGE_TOPIC: debezium-connect-status
+
+      # Kafka Connect converters
+      KEY_CONVERTER: org.apache.kafka.connect.storage.StringConverter
+      VALUE_CONVERTER: org.apache.kafka.connect.json.JsonConverter
+      INTERNAL_KEY_CONVERTER: org.apache.kafka.connect.json.JsonConverter
+      INTERNAL_VALUE_CONVERTER: org.apache.kafka.connect.json.JsonConverter
+
+      # Confluent Cloud security settings
+      KAFKA_SECURITY_PROTOCOL: SASL_SSL
+#      KAFKA_INTERNAL_CLIENT_SECURITY_PROTOCOL: SASL_SSL
+#      KAFKA_INTERNAL_CLIENT_SASL_MECHANISM: PLAIN
+#      KAFKA_INTERNAL_CLIENT_SASL_JAAS_CONFIG: 'org.apache.kafka.common.security.plain.PlainLoginModule required username="${CLOUD_API_KEY}" password="${CLOUD_API_SECRET}";'
+      CONNECT_SECURITY_PROTOCOL: SASL_SSL
+      CONNECT_SASL_MECHANISM: PLAIN
+      CONNECT_SASL_JAAS_CONFIG: 'org.apache.kafka.common.security.plain.PlainLoginModule required username="${CLOUD_API_KEY}" password="${CLOUD_API_SECRET}";'
+
+      # REST API
+      REST_PORT: 8083
+      REST_HOST_NAME: connect
+
+      # Plugin directory
+      PLUGIN_PATH: /kafka/connect
+
+    volumes:
+      - ./plugins:/kafka/connect
