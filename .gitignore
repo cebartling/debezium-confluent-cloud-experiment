@@ -1,2 +1,7 @@
-.env
-kcat.conf
+.idea/
+docker_compose/.env
+docker_compose/kcat.conf
+docker_compose/plugins/
+# Ignore all .env files in the project
+*.env
+

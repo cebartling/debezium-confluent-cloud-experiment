@@ -21,9 +21,7 @@ services:
 
       # Confluent Cloud security settings
       KAFKA_SECURITY_PROTOCOL: SASL_SSL
-#      KAFKA_INTERNAL_CLIENT_SECURITY_PROTOCOL: SASL_SSL
-#      KAFKA_INTERNAL_CLIENT_SASL_MECHANISM: PLAIN
-#      KAFKA_INTERNAL_CLIENT_SASL_JAAS_CONFIG: 'org.apache.kafka.common.security.plain.PlainLoginModule required username="${CLOUD_API_KEY}" password="${CLOUD_API_SECRET}";'
+      
       CONNECT_SECURITY_PROTOCOL: SASL_SSL
       CONNECT_SASL_MECHANISM: PLAIN
       CONNECT_SASL_JAAS_CONFIG: 'org.apache.kafka.common.security.plain.PlainLoginModule required username="${CLOUD_API_KEY}" password="${CLOUD_API_SECRET}";'
@@ -37,3 +35,19 @@ services:
 
     volumes:
       - ./plugins:/kafka/connect
+
+  postgres:
+    image: postgres:latest
+    container_name: debezium-postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: inventory
+    command: >
+      postgres -c wal_level=logical
+               -c max_wal_senders=10
+               -c max_replication_slots=10
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
