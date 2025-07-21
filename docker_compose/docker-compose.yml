@@ -7,6 +7,7 @@ services:
     env_file:
       - .env
     environment:
+      LOG_LEVEL: INFO
       BOOTSTRAP_SERVERS: ${BOOTSTRAP_SERVERS}
       GROUP_ID: debezium-connect-cloud
       CONFIG_STORAGE_TOPIC: debezium-connect-configs
@@ -25,6 +26,9 @@ services:
       CONNECT_SECURITY_PROTOCOL: SASL_SSL
       CONNECT_SASL_MECHANISM: PLAIN
       CONNECT_SASL_JAAS_CONFIG: 'org.apache.kafka.common.security.plain.PlainLoginModule required username="${CLOUD_API_KEY}" password="${CLOUD_API_SECRET}";'
+
+      # Logging overrides
+#      CONNECT_LOG4J_LOGGERS: "org.apache.kafka.clients.NetworkClient=DEBUG,org.apache.kafka.common.security=DEBUG"
 
       # REST API
       REST_PORT: 8083
